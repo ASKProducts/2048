@@ -1,3 +1,44 @@
+
+
+turnsToProcess = []
+
+that = null
+
+function parseURLParams(url) {
+  var queryStart = url.indexOf("?") + 1,
+    queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+    query = url.slice(queryStart, queryEnd - 1),
+    pairs = query.replace(/\+/g, " ").split("&"),
+    parms = {}, i, n, v, nv;
+
+  if (query === url || query === "") return;
+
+  for (i = 0; i < pairs.length; i++) {
+    nv = pairs[i].split("=", 2);
+    n = decodeURIComponent(nv[0]);
+    v = decodeURIComponent(nv[1]);
+
+    if (!parms.hasOwnProperty(n)) parms[n] = [];
+    parms[n].push(nv.length === 2 ? v : null);
+  }
+  return parms;
+}
+
+var data = parseURLParams(window.location.href)
+console.log(data);
+
+var socket = io.connect("http://localhost:8080");
+socket.emit("play", JSON.stringify(data));
+
+window.addEventListener('beforeunload', function (e) {
+  // Cancel the event
+  //e.preventDefault();
+  // Chrome requires returnValue to be set
+  e.returnValue = '';
+  
+  socket.emit('kill')
+});
+
 function GameManager(size, InputManager, Actuator, StorageManager) {
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
@@ -10,7 +51,11 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
 
+  this.turnsToProcess = []
+  
   this.setup();
+  
+  that = this
 }
 
 // Restart the game
@@ -28,6 +73,7 @@ GameManager.prototype.keepPlaying = function () {
 
 // Return true if the game is lost, or has won and the user hasn't kept playing
 GameManager.prototype.isGameTerminated = function () {
+  return false;
   return this.over || (this.won && !this.keepPlaying);
 };
 
@@ -51,12 +97,91 @@ GameManager.prototype.setup = function () {
     this.keepPlaying = false;
 
     // Add the initial tiles
-    this.addStartTiles();
+    //this.addStartTiles();
   }
+  
+  var grid = this.grid;
+  var acutate = this.actuate;
+  
+   //var socket = io();//.connect("http://localhost:8080");
+
+  //io.on('connection', function (socket) {
+    console.log("connected from game_manager :)");
+    socket.on('place', (function (piece, row, col) {
+      //console.log("got place")
+      var tile = new Tile({x: col, y: row}, piece);
+      //grid.insertTile(tile);
+      //this.actuate()
+    }).bind(this));
+    
+    
+  socket.on('turn', (function (turn) {
+    console.log("receieved turn:");
+    console.log(turn)
+    if (turnsToProcess == null){
+      turnsToProcess = [turn];
+    }
+    else{
+      turnsToProcess.push(turn);
+    }
+    //console.log("TTP:");
+    //console.log(this.turnsToProcess);
+  }).bind(this));
+    
+  //})
+
+  setInterval(this.executeTurn, 50)
+  //setTimeout(this.executeTurn, 1000);
 
   // Update the actuator
   this.actuate();
 };
+
+GameManager.prototype.callExecuteTurn = function () {
+  this.executeTurn()
+}
+
+GameManager.prototype.executeTurn = function() {
+  console.log("execute turn called");
+  console.log("turns to process:");
+  console.log(turnsToProcess)
+  
+  if (turnsToProcess != null && turnsToProcess.length  > 0) {
+    console.log("in if statement")
+    let turn = turnsToProcess.shift();
+    if (turn.type == "move"){
+      var num = 0;
+      if (turn.dir == 'U'){
+        num = 0;
+      }
+      else if (turn.dir == 'R') {
+        num = 1;
+      }
+      else if (turn.dir == 'D') {
+        num = 2;
+      } 
+      else if (turn.dir == 'L') {
+        num = 3;
+      } 
+      
+      //event.preventDefault();
+      that.inputManager.emit("move", num);
+    }
+    else if (turn.type == "place"){
+      var tile = new Tile({x: turn.col, y: turn.row}, turn.piece);
+      that.grid.insertTile(tile);
+      that.actuate()
+    }
+  }
+  
+  console.log("after if statement");
+  /*
+  var that = this
+  setTimeout(function () {
+    that.callExecuteTurn()
+  }, 1000);*/
+}
+
 
 // Set up the initial tiles to start the game with
 GameManager.prototype.addStartTiles = function () {
@@ -179,7 +304,7 @@ GameManager.prototype.move = function (direction) {
     });
   });
 
-  if (moved) {
+  /*if (moved) {
     this.addRandomTile();
 
     if (!this.movesAvailable()) {
@@ -187,7 +312,8 @@ GameManager.prototype.move = function (direction) {
     }
 
     this.actuate();
-  }
+  }*/
+  
 };
 
 // Get the vector representing the chosen direction
