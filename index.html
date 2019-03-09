@@ -12,13 +12,22 @@ function hello(){
 
 <html>
 
-Welcome to the 2048AI! Please choose your settings and press go! <br> <br>
+<div style=" text-align:center;width:60%;margin:0 auto">
+
+<h2>Welcome to the 2048AI!</h2> 
+
+If you have never played the game 2048, try playing it <a href="https://play2048.co">here</a> first!
+
+<h3>Please choose your settings and press play.</h3>
 
 <style>
 input { 
     text-align: center; 
 }
+
 </style>
+
+<link rel="stylesheet" type="text/css" href="style/main.css">
 
 <form action="/2048/game.html">
 
@@ -72,12 +81,45 @@ input {
     Probability of 4 appearing: 
     &nbsp; &nbsp; <input type="range" min="0.0" max="1.0" step="0.1" value="0.1" id="prob4" name="prob4"> &nbsp; <span id="prob4span"></span>
     <br/>
-    
-    
-    <br/> <br>
-    
-    <input type="submit" value="Play!">
+    <br/>
+    (Note: The AI will take a few seconds to load up before playing).
+    <br/>
+    <input type="submit" value="Play!" class="restart-button">  <br/>
 </form>
+
+<br/>
+
+<h2>How does it work?</h2>
+
+
+The AI is written using an algorithm known as <a href="http://web.stanford.edu/class/cs221/lectures/index.html#include=games1.js&mode=print1pp">Expectimax</a>. The rough overview of how an expecimax algorithm works is that it calculates all possible boards that a player could end up at within a few moves, assigns a score to each board, and it picks the move which has the highest probability of getting a high-scoring board.
+    
+<h2>What are all the settings?</h2>
+
+<hr>
+
+The grid weights, empty spot bonus, and smoothness bonus all contribute to what score the algorithm assigns to a board. </br><br/>
+
+<b>Grid Weights:</b><br> The first step is calculating the score of a board is that it adds up all the entires of the board, and it weights each entry according to the weight you input above. So for example, if the top left entry of the board is 16, and the top left weight is 5, then it adds 16*5=80 points to the board's score. By changing the grid weights, you can shape how the AI will try to make the board look (the default weights try to force the biggest tiles to congregate in the bottom right corner).<br><br>
+
+<b>Empty Spot Bonus:</b><br> The next step in calculating the score of the board is adding the empty spot bonus for every empty spot on the board. So for example if your empty spot bonus is 20 and there are 7 empty spots on the board, then 20*7=140 points will be added to the board's score.<br><br>
+
+<b>Smoothness Bonus:</b><br> The final step in calculating the score of the board is adding a bonus for "smooth" boards. The way it does this is it goes over all pairs of adjacent tiles, and it adds a score bonus, which ranges from 0 to the number you input depending on how close together the two adjacent tiles are in value (so neighboring 4 and 1024 tiles will have a very small bonus, but a 1024 next to a 2048 will have a high bonus).
+
+<br><br>
+
+<hr>
+
+<b>Search Depth:</b><br> The search depth is how many moves into the future the algorithm looks. A search depth of 3 will likely run at a reasonable speed and hit the 2048 and often 4096 tiles, whereas a search depth of 6 or 7 will take a lot longer to run, but has a chance at hitting the 8192 and 16384 tiles.
+
+<br><br>
+
+<b>Sampling Amount:</b> <br>
+The sampling amount is a way to trade speed for ability. For example, if the sampling amount is set to 5 and the board has 10 open spots, then rather than looking into what will happen if a tile is placed in each of the 10 different spots, it will instead pick 5 spots at random to simulate. <br><br>
+
+<b>Tile Probabilities:</b> <br>
+These settings just control the probability that a newly generated tile is a 2 or a 4. The original 2048 game has the probability of a 2 showing up at 0.9 and the probability of a 4 showing up at 0.1. To speed up the AI and make it perform better, try setting the probability of a 2 showing up to be exactly 1.
+</center>
     
 <script>
     
