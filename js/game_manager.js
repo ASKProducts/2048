@@ -27,12 +27,12 @@ function parseURLParams(url) {
 var data = parseURLParams(window.location.href)
 console.log(data);
 
-var socket = io.connect("http://localhost:8080");
+var socket = io.connect();
 socket.emit("play", JSON.stringify(data));
 
 window.addEventListener('beforeunload', function (e) {
   // Cancel the event
-  //e.preventDefault();
+  e.preventDefault();
   // Chrome requires returnValue to be set
   e.returnValue = '';
   
@@ -130,8 +130,16 @@ GameManager.prototype.setup = function () {
     
   //})
 
-  setInterval(this.executeTurn, 50)
+  //setInterval(this.executeTurn, 1)
   //setTimeout(this.executeTurn, 1000);
+
+  var doTurn = function () {
+    that.executeTurn()
+    console.log(400-parseInt(document.getElementById("speed").value))
+    setTimeout(doTurn, 400-parseInt(document.getElementById("speed").value))
+  }
+
+  setTimeout(doTurn, 400-parseInt(document.getElementById("speed").value))
 
   // Update the actuator
   this.actuate();

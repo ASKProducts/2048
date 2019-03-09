@@ -80,6 +80,13 @@
       </div>
     </div>
 
+
+        <br/> <br/>
+
+    Maximum Possible Speed (The speed will only change if the settings allow the AI to run very fast):
+    <input type="range" class="slider" id="speed" min="0" max="400" value="350" step="10">
+    <div align="left"> Slow  <span style="float:right;">Fast</span> </div>
+
     <p class="game-explanation">
       
     </p>
@@ -93,7 +100,7 @@
     </p>
   </div>
 
-  <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="js/bind_polyfill.js"></script>
   <script src="js/classlist_polyfill.js"></script>
   <script src="js/animframe_polyfill.js"></script>
