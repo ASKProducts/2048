@@ -87,16 +87,20 @@ input {
     <input type="submit" value="Play!" class="restart-button">  <br/>
 </form>
 
-<br/>
-
+<hr>
 <h2>How does it work?</h2>
 
 
 The AI is written using an algorithm known as <a href="http://web.stanford.edu/class/cs221/lectures/index.html#include=games1.js&mode=print1pp">Expectimax</a>. The rough overview of how an expecimax algorithm works is that it calculates all possible boards that a player could end up at within a few moves, assigns a score to each board, and it picks the move which has the highest probability of getting a high-scoring board.
+
+<br><br>
+
+The source code for the AI is available at <a href="https://github.com/ASKProducts/2048AI">https://github.com/ASKProducts/2048AI</a>.
+    
+<hr>
     
 <h2>What are all the settings?</h2>
 
-<hr>
 
 The grid weights, empty spot bonus, and smoothness bonus all contribute to what score the algorithm assigns to a board. </br><br/>
 
@@ -104,7 +108,7 @@ The grid weights, empty spot bonus, and smoothness bonus all contribute to what 
 
 <b>Empty Spot Bonus:</b><br> The next step in calculating the score of the board is adding the empty spot bonus for every empty spot on the board. So for example if your empty spot bonus is 20 and there are 7 empty spots on the board, then 20*7=140 points will be added to the board's score.<br><br>
 
-<b>Smoothness Bonus:</b><br> The final step in calculating the score of the board is adding a bonus for "smooth" boards. The way it does this is it goes over all pairs of adjacent tiles, and it adds a score bonus, which ranges from 0 to the number you input depending on how close together the two adjacent tiles are in value (so neighboring 4 and 1024 tiles will have a very small bonus, but a 1024 next to a 2048 will have a high bonus).
+<b>Smoothness Bonus:</b><br> The final step in calculating the score of the board is adding a bonus for "smooth" boards. The way it does this is it goes over all pairs of adjacent tiles and for each pair, it adds a score bonus, which ranges from 0 to the number you input, depending on how close together the two adjacent tiles are in value (so neighboring 4 and 1024 tiles will have a very small bonus, but a 1024 next to a 2048 will have a high bonus).
 
 <br><br>
 
@@ -142,7 +146,7 @@ These settings just control the probability that a newly generated tile is a 2 o
         fouroutput.innerHTML = this.value;
         
         twoslider.value = 1 - this.value
-        twooutput.innerHTML = fourslider.value
+        twooutput.innerHTML = twoslider.value
     }
     
     
