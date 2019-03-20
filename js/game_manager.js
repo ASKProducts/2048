@@ -116,6 +116,7 @@ GameManager.prototype.setup = function () {
     
     
   socket.on('turn', (function (turn) {
+    document.getElementById("loading").style.display = "none"
     console.log("receieved turn:");
     console.log(turn)
     if (turnsToProcess == null){
@@ -135,7 +136,7 @@ GameManager.prototype.setup = function () {
 
   var doTurn = function () {
     that.executeTurn()
-    console.log(400-parseInt(document.getElementById("speed").value))
+    //console.log(400-parseInt(document.getElementById("speed").value))
     setTimeout(doTurn, 400-parseInt(document.getElementById("speed").value))
   }
 
@@ -153,6 +154,8 @@ GameManager.prototype.executeTurn = function() {
   console.log("execute turn called");
   console.log("turns to process:");
   console.log(turnsToProcess)
+  
+  
   
   if (turnsToProcess != null && turnsToProcess.length  > 0) {
     console.log("in if statement")
